@@ -31,10 +31,7 @@ pipeline {
                 bat '''
                 call %VENV_DIR%\\Scripts\\activate
                 if not exist %REPORT_DIR% mkdir %REPORT_DIR%
-                pytest tests ^
-                  --html=%REPORT_DIR%\\index.html ^
-                  --self-contained-html ^
-                  -v || exit 0
+                pytest tests --html=%REPORT_DIR%\\index.html --self-contained-html -v || exit 0
                 '''
             }
         }
@@ -42,16 +39,15 @@ pipeline {
 
     post {
         always {
-
-            // 📌 Publier le rapport dans Jenkins
+            // Publier le rapport dans Jenkins (paramètre allowMissing ajouté)
             publishHTML([
                 reportDir: 'report',
                 reportFiles: 'index.html',
                 reportName: 'Rapport de tests Selenium',
                 keepAll: true,
-                alwaysLinkToLastBuild: true
+                alwaysLinkToLastBuild: true,
+                allowMissing: true          // ⚠️ paramètre obligatoire
             ])
-
         }
     }
 }
