@@ -2,52 +2,55 @@ pipeline {
     agent any
 
     environment {
-        VENV_DIR = "venv"
-        REPORT_DIR = "report"
+        VENV_DIR = "${WORKSPACE}\\venv"
+        PYTHON = "${VENV_DIR}\\Scripts\\python.exe"
+        PIP = "${VENV_DIR}\\Scripts\\pip.exe"
     }
 
     stages {
 
-        stage('Checkout') {
+        stage('Checkout SCM') {
             steps {
-                checkout scm
+                git url: 'https://github.com/Rezak12345/Formulaire_Python.git', branch: 'main'
             }
         }
 
         stage('Setup Python') {
             steps {
-                bat '''
-                python --version
-                python -m venv %VENV_DIR%
-                call %VENV_DIR%\\Scripts\\activate
-                pip install --upgrade pip
-                pip install -r requirements.txt
-                '''
+                bat """
+                python -m venv venv
+                call ${PIP} install --upgrade pip
+                call ${PIP} install -r requirements.txt
+                """
             }
         }
 
         stage('Run Tests') {
             steps {
-                bat '''
-                call %VENV_DIR%\\Scripts\\activate
-                if not exist %REPORT_DIR% mkdir %REPORT_DIR%
-                cd %WORKSPACE%  # racine du projet
-                pytest tests\\formulaire_test.py --html=%REPORT_DIR%\\index.html --self-contained-html -v || exit 0
-                '''
+                bat """
+                REM --- Lancer les tests en headless ---
+                set EDGE_OPTIONS=--headless --disable-gpu --no-sandbox --disable-dev-shm-usage
+                ${PYTHON} -m pytest tests --html=report\\index.html --self-contained-html
+                """
+            }
+        }
+
+        stage('Publish Report') {
+            steps {
+                publishHTML([
+                    reportName: 'Rapport Tests',
+                    reportDir: 'report',
+                    reportFiles: 'index.html',
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true
+                ])
             }
         }
     }
 
     post {
         always {
-            publishHTML([
-                reportDir: 'report',
-                reportFiles: 'index.html',
-                reportName: 'Rapport de tests Selenium',
-                keepAll: true,
-                alwaysLinkToLastBuild: true,
-                allowMissing: true
-            ])
+            echo "Build terminé. Vérifiez le rapport HTML."
         }
     }
 }

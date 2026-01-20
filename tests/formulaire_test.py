@@ -14,7 +14,11 @@ class TestSendFormulaire(unittest.TestCase):
     def setUpClass(cls):
         options = webdriver.EdgeOptions()
         options.use_chromium = True
-        options.headless = False 
+        #options.headless = False
+        options.add_argument("--headless")  # <-- Très important pour Jenkins
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--disable-dev-shm-usage")
         cls.driver = webdriver.Edge(options=options)
         cls.read_data = ReadData()
         cls.url = "https://sendform.nicepage.io/?version=13efcba7-1a49-45a5-9967-c2da8ebdd189&uid=f7bd60f0-34c8-40e3-8e2c-06cc19fcb730"
