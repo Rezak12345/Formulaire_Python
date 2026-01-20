@@ -1,0 +1,37 @@
+{
+  "Client1": {
+    "email": "kamel@gmail.com",
+    "name": "kamel",
+    "phone": "0605040302",
+    "adresse": "20 aveue marechal juin",
+    "message": "Hello",
+    "produit": "Voiture"
+  },
+
+  "Client2": {
+    "email": "Sandra@gmail.com",
+    "name": "Sandra",
+    "phone": "0605040302",
+    "adresse": "20 rue  medecin",
+    "message": "Hello",
+    "produit": "Moto"
+  },
+
+  "Client3": {
+    "email": "Badis@gmail.com",
+    "name": "Badis",
+    "phone": "0605040302",
+    "adresse": "20 avenue massina",
+    "message": "Hello",
+    "produit": "Moto"
+  },
+
+  "Client4": {
+    "email": "Sabrina@gmail.com",
+    "name": "Sabrina",
+    "phone": "0605040302",
+    "adresse": "5 rue des maraichers",
+    "message": "Hello",
+    "produit": "Vélo"
+  }
+}
