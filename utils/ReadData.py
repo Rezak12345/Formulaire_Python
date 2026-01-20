@@ -1,9 +1,9 @@
 import json
-from Client import Client
+from models.Client import Client
 
 class ReadData:
     def __init__(self):
-        self.file_name = "C:\\Users\\User\\Desktop\\Exercice_Python\\data\\DataClients.json"
+        self.file_name = "/data/DataClients.json"
 
     def read_data_from_json(self, client_key: str) -> Client | None:
         with open(self.file_name, "r", encoding="utf-8") as file:

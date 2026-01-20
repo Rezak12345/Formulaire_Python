@@ -1,10 +1,8 @@
 import unittest
-import selenium
-import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
-from ReadData import ReadData
+from utils.ReadData import ReadData
 
 
 class TestSendFormulaire(unittest.TestCase):
