@@ -15,9 +15,10 @@ pipeline {
 
         stage('Setup Python Environment') {
             steps {
-                sh '''
-                python3 -m venv ${VENV_DIR}
-                . ${VENV_DIR}/bin/activate
+                bat '''
+                python --version
+                python -m venv %VENV_DIR%
+                %VENV_DIR%\\Scripts\\activate
                 pip install --upgrade pip
                 pip install -r requirements.txt
                 '''
@@ -26,9 +27,9 @@ pipeline {
 
         stage('Run Tests & Generate Report') {
             steps {
-                sh '''
-                . ${VENV_DIR}/bin/activate
-                pytest tests/ --html=report.html --self-contained-html
+                bat '''
+                %VENV_DIR%\\Scripts\\activate
+                pytest tests --html=report.html --self-contained-html
                 '''
             }
         }
@@ -40,11 +41,11 @@ pipeline {
         }
 
         success {
-            echo '✅ Tests réussis – rapport généré'
+            echo '✅ Tests exécutés avec succès'
         }
 
         failure {
-            echo '❌ Tests échoués – voir le rapport'
+            echo '❌ Échec des tests – voir le rapport'
         }
     }
 }
