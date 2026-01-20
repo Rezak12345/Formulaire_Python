@@ -13,10 +13,9 @@ pipeline {
             }
         }
 
-        stage('Setup Python') {
+        stage('Setup Python Environment') {
             steps {
                 sh '''
-                python3 --version
                 python3 -m venv ${VENV_DIR}
                 . ${VENV_DIR}/bin/activate
                 pip install --upgrade pip
@@ -25,7 +24,7 @@ pipeline {
             }
         }
 
-        stage('Run Tests with Pytest') {
+        stage('Run Tests & Generate Report') {
             steps {
                 sh '''
                 . ${VENV_DIR}/bin/activate
@@ -41,11 +40,11 @@ pipeline {
         }
 
         success {
-            echo '✅ Tests exécutés avec succès'
+            echo '✅ Tests réussis – rapport généré'
         }
 
         failure {
-            echo '❌ Des tests ont échoué'
+            echo '❌ Tests échoués – voir le rapport'
         }
     }
 }
