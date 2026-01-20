@@ -31,6 +31,7 @@ pipeline {
                 bat '''
                 call %VENV_DIR%\\Scripts\\activate
                 if not exist %REPORT_DIR% mkdir %REPORT_DIR%
+                cd %WORKSPACE%  # racine du projet
                 pytest tests\\formulaire_test.py --html=%REPORT_DIR%\\index.html --self-contained-html -v || exit 0
                 '''
             }
