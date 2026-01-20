@@ -3,54 +3,48 @@ pipeline {
 
     environment {
         VENV_DIR = "${WORKSPACE}\\venv"
-        PYTHON = "${VENV_DIR}\\Scripts\\python.exe"
-        PIP = "${VENV_DIR}\\Scripts\\pip.exe"
+        REPORT_DIR = "${WORKSPACE}\\report"
     }
 
     stages {
-
-        stage('Checkout SCM') {
+        stage('Checkout') {
             steps {
-                git url: 'https://github.com/Rezak12345/Formulaire_Python.git', branch: 'main'
+                checkout scm
             }
         }
 
         stage('Setup Python') {
             steps {
                 bat """
-                python -m venv venv
-                call ${PIP} install --upgrade pip
-                call ${PIP} install -r requirements.txt
+                python -m venv %VENV_DIR%
+                call %VENV_DIR%\\Scripts\\pip.exe install --upgrade pip
+                call %VENV_DIR%\\Scripts\\pip.exe install -r requirements.txt
                 """
             }
         }
 
         stage('Run Tests') {
             steps {
-                bat """
-                REM --- Lancer les tests en headless ---
-                ${PYTHON} -m pytest tests\\formulaire_test.py --html=report\\index.html --self-contained-html -v
-                """
-            }
-        }
+                // Crée le dossier report s'il n'existe pas
+                bat "if not exist %REPORT_DIR% mkdir %REPORT_DIR%"
 
-        stage('Publish Report') {
-            steps {
-                publishHTML([
-                    reportName: 'Rapport Tests',
-                    reportDir: 'report',
-                    reportFiles: 'index.html',
-                    keepAll: true,               // ⚠️ Obligatoire
-                    alwaysLinkToLastBuild: true,
-                    allowMissing: false          // ⚠️ Obligatoire
-                ])
+                // Lancer pytest avec Selenium Edge headless
+                bat """
+                call %VENV_DIR%\\Scripts\\python.exe -m pytest tests\\formulaire_test.py --html=%REPORT_DIR%\\index.html --self-contained-html -v
+                """
             }
         }
     }
 
     post {
         always {
-            echo "Build terminé. Vérifiez le rapport HTML."
+            // Archive le rapport HTML pour Jenkins
+            archiveArtifacts artifacts: 'report\\index.html', fingerprint: true
+            echo "Rapport HTML disponible : ${REPORT_DIR}\\index.html"
+        }
+
+        failure {
+            echo "Les tests ont échoué ! Vérifie le rapport HTML."
         }
     }
 }

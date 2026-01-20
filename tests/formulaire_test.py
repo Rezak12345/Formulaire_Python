@@ -6,6 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from utils.ReadData import ReadData
+from selenium.webdriver.edge.service import Service
 
 
 class TestSendFormulaire(unittest.TestCase):
@@ -14,12 +15,14 @@ class TestSendFormulaire(unittest.TestCase):
     def setUpClass(cls):
         options = webdriver.EdgeOptions()
         options.use_chromium = True
+        edge_service = Service(executable_path=r"C:\Users\User\Downloads\edgedriver_win64\msedgedriver.exe")
         #options.headless = False
         options.add_argument("--headless")  # <-- Très important pour Jenkins
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-gpu")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--remote-allow-origins=*")
+        cls.driver = webdriver.Edge(service=edge_service, options=options)
         cls.driver = webdriver.Edge(options=options)
         cls.read_data = ReadData()
         cls.url = "https://sendform.nicepage.io/?version=13efcba7-1a49-45a5-9967-c2da8ebdd189&uid=f7bd60f0-34c8-40e3-8e2c-06cc19fcb730"
