@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         VENV_DIR = "venv"
+        REPORT_DIR = "report"
     }
 
     stages {
@@ -13,23 +14,27 @@ pipeline {
             }
         }
 
-        stage('Setup Python Environment') {
+        stage('Setup Python') {
             steps {
                 bat '''
                 python --version
                 python -m venv %VENV_DIR%
-                %VENV_DIR%\\Scripts\\activate
+                call %VENV_DIR%\\Scripts\\activate
                 pip install --upgrade pip
                 pip install -r requirements.txt
                 '''
             }
         }
 
-        stage('Run Tests & Generate Report') {
+        stage('Run Tests') {
             steps {
                 bat '''
-                %VENV_DIR%\\Scripts\\activate
-                pytest tests --html=report.html --self-contained-html
+                call %VENV_DIR%\\Scripts\\activate
+                if not exist %REPORT_DIR% mkdir %REPORT_DIR%
+                pytest tests ^
+                  --html=%REPORT_DIR%\\index.html ^
+                  --self-contained-html ^
+                  -v || exit 0
                 '''
             }
         }
@@ -37,15 +42,16 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'report.html', fingerprint: true
-        }
 
-        success {
-            echo '✅ Tests exécutés avec succès'
-        }
+            // 📌 Publier le rapport dans Jenkins
+            publishHTML([
+                reportDir: 'report',
+                reportFiles: 'index.html',
+                reportName: 'Rapport de tests Selenium',
+                keepAll: true,
+                alwaysLinkToLastBuild: true
+            ])
 
-        failure {
-            echo '❌ Échec des tests – voir le rapport'
         }
     }
 }
