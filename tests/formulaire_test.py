@@ -17,10 +17,12 @@ class TestSendFormulaire(unittest.TestCase):
         options.use_chromium = True
         edge_service = Service(executable_path=r"C:\Users\User\Downloads\edgedriver_win64\msedgedriver.exe")
         #options.headless = False
-        options.add_argument("--headless")  # <-- Très important pour Jenkins
-        options.add_argument("--no-sandbox")
+        options.add_argument("--headless")
         options.add_argument("--disable-gpu")
+        options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-extensions")
+        options.add_argument("--disable-features=VizDisplayCompositor")
         options.add_argument("--remote-allow-origins=*")
         cls.driver = webdriver.Edge(service=edge_service, options=options)
         cls.driver = webdriver.Edge(options=options)
