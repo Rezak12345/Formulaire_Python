@@ -29,8 +29,7 @@ pipeline {
             steps {
                 bat """
                 REM --- Lancer les tests en headless ---
-                set EDGE_OPTIONS=--headless --disable-gpu --no-sandbox --disable-dev-shm-usage
-                ${PYTHON} -m pytest tests --html=report\\index.html --self-contained-html
+                ${PYTHON} -m pytest tests\\formulaire_test.py --html=report\\index.html --self-contained-html -v
                 """
             }
         }
@@ -41,8 +40,9 @@ pipeline {
                     reportName: 'Rapport Tests',
                     reportDir: 'report',
                     reportFiles: 'index.html',
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: true
+                    keepAll: true,               // ⚠️ Obligatoire
+                    alwaysLinkToLastBuild: true,
+                    allowMissing: false          // ⚠️ Obligatoire
                 ])
             }
         }
