@@ -23,6 +23,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run Selenium tests
+    - name: Run Selenium tests with HTML report
       run: |
-        pytest -v
+        pytest -v --html=report.html --self-contained-html
+
+    - name: Upload test report
+      uses: actions/upload-artifact@v4
+      with:
+        name: selenium-test-report
+        path: report.html
